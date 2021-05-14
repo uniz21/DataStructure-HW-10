@@ -499,9 +499,10 @@ void enQueue(Node* aNode)
 		for (int i=0;i<size;i++)/* 남은 노드 수 만큼 반복 */
 		{
 			queue[i] = queue[front+(i+1)];/* 노드들을 큐의 앞으로 이동시킨다*/
+			queue[front + (i + 1)] = NULL;
 		}
 		front = -1;/* front 초기화 */
-		rear -= size; /* 노드들이 이동한 만큼 rear값도 감소시킨다. */
+		rear = size-1; /* rear값은 size-1로 초기화 하여 front와 rear간의 거리 유지 */
 		return;
 	}
 	rear++;/* 큐의 끝을 가르키는 rear값을 1만큼 증가시킨다.*/
