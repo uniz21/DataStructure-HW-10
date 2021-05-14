@@ -45,7 +45,7 @@ int deleteNode(Node* head, int key);  /* delete the node for the key */
 int freeBST(Node* head); /* free all memories allocated to the tree */
 
 /* you may add your own defined functions if necessary */
-
+Node* minSub(Node* ptr);
 //void printStack();
 
 int main()
@@ -109,6 +109,7 @@ int main()
 	return 1;
 }
 
+/* 초기화 */
 int initializeBST(Node** h) {
 
 	/* if the tree is not empty, then remove all allocated nodes from the tree*/
@@ -164,7 +165,7 @@ void levelOrder(Node* ptr)
 	for (; ; ) {
 		ptr = deQueue();
 		if (ptr) {
-			printf(" % d ", ptr->key);
+			printf(" [%d] ", ptr->key);
 			if (ptr->left)
 				enQueue(ptr->left);
 			if (ptr->right)
@@ -221,13 +222,23 @@ int insert(Node* head, int key)
 
 int deleteNode(Node* head, int key)
 {
-	Node* p = head->left;
+	Node* p = head;
 	Node* parentNode = NULL;
 	Node* childNode = NULL;
 	int direction = 0;
 
 	while (p != NULL)
 	{
+		/* 삭제해야할 노드가 root노드인 경우, 자식노드가 있다면 root노드를 대체해야 하므로
+		*  첫 시작 시 head노드를 부모노드로 설정한다. */
+		if (p->right == p)
+		{
+			parentNode = p;
+			direction = -1;
+			p = p->left;
+			continue;
+		}
+
 		if (key == p->key)
 		{
 			/* 리프 노드의 삭제 -> 그냥 삭제*/
@@ -258,11 +269,22 @@ int deleteNode(Node* head, int key)
 
 				return 1;
 			}
-			/* 두개의 자식을 가진 줄기 노드 삭제 -> 오른쪽 서브트리의 가장 작은 원소로 root를 대체 */
+			/* 두개의 자식을 가진 줄기 노드 삭제 
+			*  -> 왼쪽 서브트리의 가장 큰 원소 혹은 오른쪽 서브트리의 가장 작은 원소로 root를 대체(과제는 오른쪽)
+			*  (이원탐색 트리의 특성을 유지하기 위해) */
 			/* 자식노드들이 (NULL,NULL), (left,NULL), (NULL, right)인 경우를 모두 확인한 뒤이므로 모든 자식노드들이 비어있지 않은 상태 */
 			else
 			{
+				childNode = minSub(p->right);
 
+				childNode->right = p->right;
+				childNode->left = p->left;
+
+				free(p);
+				if (direction == 1)
+					parentNode->right = childNode;
+				else if (direction == -1)
+					parentNode->left = childNode;
 
 				return 1;
 			}
@@ -283,6 +305,23 @@ int deleteNode(Node* head, int key)
 	}
 }
 
+/* subtree 탐색 및 (최소값 키)노드 추출 함수 */
+Node* minSub(Node* ptr)
+{
+	Node* temp;
+	Node* parent;
+	/* 키 값이 최소인 노드만 찾으면 되므로 왼쪽으로만 탐색한다.(이원 탐색 트리의 특성상 키값 비교 불필요) */
+	while (ptr != NULL)
+	{
+		if (ptr->left == NULL)
+		{
+			parent->left = NULL;
+			return ptr;
+		}
+		parent = ptr;
+		ptr = ptr->left;
+	}
+}
 
 void freeNode(Node* ptr)
 {
@@ -346,11 +385,31 @@ void push(Node* aNode)
 
 Node* deQueue()
 {
-
+	/* 큐가 공백이면 종료 */
+	if (front == rear) return NULL;
+	front++;
+	Node* temp = queue[front];
+	queue[front] = NULL;
+	return temp;
 }
 
 
 void enQueue(Node* aNode)
 {
-
+	/* 큐가 가득 찼다면 */
+	if (rear == MAX_QUEUE_SIZE - 1)
+	{
+		/* 선형 큐 앞으로 끌어당기기 */
+		/* 큐에 남아있는 노드 수를 구한다. */
+		int size = rear - front;
+		for (int i=0;i<size;i++)
+		{
+			queue[i] = queue[front+(i+1)];
+		}
+		front = -1;
+		rear -= size;
+		return;
+	}
+	rear++;
+	queue[rear] = aNode;
 }
