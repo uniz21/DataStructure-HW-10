@@ -360,11 +360,16 @@ int deleteNode(Node* head, int key)
 				/* 오른쪽 서브트리의 가장 작은 키 값을 갖는 노드를 추출 */
 				childNode = minSub(p->right);/* 자식노드로 설정 */
 
-				if (childNode == p->right) childNode->right = NULL; /* 대체할 자식노드가 직계자식이면 childNode->right는 NULL */
+				if (childNode == p->right) /* 대체할 자식노드가 직계자식(왼쪽노드 NULL인 서브트리)이면 */
+				{
+					if (childNode->right != NULL) /* 자식노드의 오른쪽 노드가 있다면 */
+						childNode->right = p->right->right;/* 연결 */
+				}
+				/* 대체할 자식노드가 서브트리의 잎 노드이면 */
+				else
+					childNode->right = p->right;/* 대체를 위해 설정된 자식노드의 오른쪽에 삭제할 노드의 기존 자식 노드들을 연결 */
 
-				/* 대체를 위해 설정된 자식노드의 양쪽으로 삭제할 노드의 기존 자식 노드들을 연결 */
-				else childNode->right = p->right;
-				childNode->left = p->left;
+				childNode->left = p->left;/* 왼쪽 노드 연결 */
 
 				free(p);/* 메모리 해제 */
 
