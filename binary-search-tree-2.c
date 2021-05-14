@@ -400,14 +400,18 @@ int deleteNode(Node* head, int key)
 Node* minSub(Node* ptr)
 {
 	Node* temp;
-	Node* parent;/* 서브트리가 하나의 노드만 존재하거나 왼쪽에 자식노드가 없는 경우*/
+	Node* parent = NULL;/* 서브트리가 하나의 노드만 존재하거나 왼쪽에 자식노드가 없는 경우*/
 	/* 키 값이 최소인 노드만 찾으면 되므로 왼쪽으로만 탐색한다.(이원 탐색 트리의 특성상 키값 비교 불필요) */
 	while (ptr != NULL)/* 더이상 탐색할 노드가 없을 때 까지 반복*/
 	{
 		if (ptr->left == NULL)/* 왼쪽 자식 노드가 없다면 현재 노드가 최소 키값을 갖는 노드 */
 		{
-			parent->left = NULL;/* 부모 노드의 왼쪽 자식을 공백처리 */
-			return ptr;/* 현재노드를 반환 */
+			if (parent != NULL)
+			{
+				parent->left = NULL;/* 부모 노드의 왼쪽 자식을 공백처리 */
+				return ptr;/* 현재노드를 반환 */
+			}
+			else break;
 		}
 		parent = ptr; /* 다음 노드 탐색 이전에 현재노드를 부모노드로 기억한다. */
 		ptr = ptr->left;/* 왼쪽 노드 탐색 */
