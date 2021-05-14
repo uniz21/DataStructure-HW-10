@@ -358,10 +358,12 @@ int deleteNode(Node* head, int key)
 			else
 			{
 				/* 오른쪽 서브트리의 가장 작은 키 값을 갖는 노드를 추출 */
-				childNode = minSub(p->right,p);/* 자식노드로 설정 */
+				childNode = minSub(p->right);/* 자식노드로 설정 */
+
+				if (childNode == p->right) childNode->right = NULL; /* 대체할 자식노드가 직계자식이면 childNode->right는 NULL */
 
 				/* 대체를 위해 설정된 자식노드의 양쪽으로 삭제할 노드의 기존 자식 노드들을 연결 */
-				childNode->right = p->right;
+				else childNode->right = p->right;
 				childNode->left = p->left;
 
 				free(p);/* 메모리 해제 */
@@ -400,18 +402,18 @@ int deleteNode(Node* head, int key)
 Node* minSub(Node* ptr)
 {
 	Node* temp;
-	Node* parent = NULL;/* 서브트리가 하나의 노드만 존재하거나 왼쪽에 자식노드가 없는 경우*/
+	Node* parent = NULL;/* 서브트리가 하나의 노드만 존재하거나 왼쪽에 자식노드가 없는 경우 parent는 NULL*/
 	/* 키 값이 최소인 노드만 찾으면 되므로 왼쪽으로만 탐색한다.(이원 탐색 트리의 특성상 키값 비교 불필요) */
 	while (ptr != NULL)/* 더이상 탐색할 노드가 없을 때 까지 반복*/
 	{
 		if (ptr->left == NULL)/* 왼쪽 자식 노드가 없다면 현재 노드가 최소 키값을 갖는 노드 */
 		{
-			if (parent != NULL)
+			if (parent != NULL)/* parent가 설정됬다면*/
 			{
 				parent->left = NULL;/* 부모 노드의 왼쪽 자식을 공백처리 */
 				return ptr;/* 현재노드를 반환 */
 			}
-			else break;
+			else break; /* parent가 NULL이면 현재노드가 서브트리의 root노드이므로 break */
 		}
 		parent = ptr; /* 다음 노드 탐색 이전에 현재노드를 부모노드로 기억한다. */
 		ptr = ptr->left;/* 왼쪽 노드 탐색 */
