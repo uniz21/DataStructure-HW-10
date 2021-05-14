@@ -161,13 +161,6 @@ int initializeBST(Node** h) {
 
 void recursiveInorder(Node* ptr)
 {
-	/* 트리에 노드가 없는 경우 종료 */
-	if (ptr == NULL)
-	{
-		printf("There is no Tree");
-		return ;
-	}
-
 	if(ptr) {/* 현재 노드가 NULL이 아니면 */
 		recursiveInorder(ptr->left);/* 왼쪽 노드 재귀탐색 */
 		printf(" [%d] ", ptr->key);/* 출력 */
@@ -365,7 +358,7 @@ int deleteNode(Node* head, int key)
 			else
 			{
 				/* 오른쪽 서브트리의 가장 작은 키 값을 갖는 노드를 추출 */
-				childNode = minSub(p->right);/* 자식노드로 설정 */
+				childNode = minSub(p->right,p);/* 자식노드로 설정 */
 
 				/* 대체를 위해 설정된 자식노드의 양쪽으로 삭제할 노드의 기존 자식 노드들을 연결 */
 				childNode->right = p->right;
@@ -407,7 +400,7 @@ int deleteNode(Node* head, int key)
 Node* minSub(Node* ptr)
 {
 	Node* temp;
-	Node* parent;
+	Node* parent;/* 서브트리가 하나의 노드만 존재하거나 왼쪽에 자식노드가 없는 경우*/
 	/* 키 값이 최소인 노드만 찾으면 되므로 왼쪽으로만 탐색한다.(이원 탐색 트리의 특성상 키값 비교 불필요) */
 	while (ptr != NULL)/* 더이상 탐색할 노드가 없을 때 까지 반복*/
 	{
@@ -419,6 +412,7 @@ Node* minSub(Node* ptr)
 		parent = ptr; /* 다음 노드 탐색 이전에 현재노드를 부모노드로 기억한다. */
 		ptr = ptr->left;/* 왼쪽 노드 탐색 */
 	}
+	return ptr;/* 삭제할 노드의 서브트리가 하나의 노드 뿐이거나, 왼쪽 노드가 없는 경우 가장 작은 키값을 갖는 노드는 서브트리의 root노드 */
 }
 
 /* 메모리 해제 */
