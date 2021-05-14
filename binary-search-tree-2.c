@@ -206,6 +206,9 @@ void levelOrder(Node* ptr)
 		return;
 	}
 
+	front = -1;
+	rear = -1;
+
 	/* 레벨 순서 트리 순회 */
 	if (!ptr) return; /* 공백 트리 */
 	
